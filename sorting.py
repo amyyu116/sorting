@@ -25,7 +25,8 @@ def cmp_standard(a, b):
         return -1
     if b < a:
         return 1
-    return 0
+    else:
+        return 0
 
 
 def cmp_reverse(a, b):
@@ -82,6 +83,7 @@ def _merged(xs, ys, cmp=cmp_standard):
     >>> _merged([1, 3, 5], [2, 4, 6])
     [1, 2, 3, 4, 5, 6]
     '''
+    '''
     output = []
     while len(xs) != 0 and len(ys) != 0:
         if cmp(xs[0], ys[0]) == -1:
@@ -96,6 +98,24 @@ def _merged(xs, ys, cmp=cmp_standard):
     if len(xs) > 0:
         for i in range(len(xs)):
             output.append(xs[i])
+    return output
+    '''
+    i_index = 0
+    y_index = 0
+    output = []
+    while i_index < len(xs) and y_index < len(ys):
+        if cmp(xs[i_index], ys[y_index]) == -1:
+            output.append(xs[i_index])
+            i_index += 1
+        else:
+            output.append(ys[y_index])
+            y_index += 1
+    while i_index < len(xs):
+        output.append(xs[i_index])
+        i_index += 1
+    while y_index < len(ys):
+        output.append(ys[y_index])
+        y_index += 1
     return output
 
 
@@ -121,7 +141,9 @@ def merge_sorted(xs, cmp=cmp_standard):
         mid = len(xs) // 2
         left = xs[:mid]
         right = xs[mid:]
-        return _merged(merge_sorted(left), merge_sorted(right))
+        left_sorted = merge_sorted(left, cmp=cmp)
+        right_sorted = merge_sorted(right, cmp=cmp)
+        return _merged(left_sorted, right_sorted, cmp=cmp)
 
 
 def quick_sorted(xs, cmp=cmp_standard):
@@ -151,12 +173,13 @@ def quick_sorted(xs, cmp=cmp_standard):
     if len(xs) <= 1:
         return xs
     else:
-        p = sum(xs) // len(xs)
-        less_than = [x for x in xs if cmp(x, p) == -1]
-        equal = [x for x in xs if x == p]
-        greater_than = [x for x in xs if cmp(x, p) == 1]
-        greater_than = quick_sorted(greater_than)
-        less_than = quick_sorted(less_than)
+        mid = len(xs) // 2
+        pivot = xs[mid]
+        less_than = [x for x in xs if cmp(x, pivot) == -1]
+        equal = [x for x in xs if cmp(x, pivot) == 0]
+        greater_than = [x for x in xs if cmp(x, pivot) == 1]
+        greater_than = quick_sorted(greater_than, cmp=cmp)
+        less_than = quick_sorted(less_than, cmp=cmp)
         return less_than + equal + greater_than
 
 
